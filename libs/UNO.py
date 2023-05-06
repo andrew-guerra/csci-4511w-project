@@ -104,12 +104,19 @@ class UNO(Game):
             # handle +2
             if move["value"] == 11:
                 if len(board["draw"]) - 2 < 0:
+                    if(len(board["draw"]) - 1 < 0):
+                        discardTop = board["discard"].pop()
+                        board["draw"] = board["discard"].copy()
+                        random.shuffle(board["draw"])
+                        board["discard"] = [discardTop]
+                    
                     self.draw_card(board[nextPlayer], board["draw"])
                     
-                    discardTop = board["discard"].pop()
-                    board["draw"] = board["discard"].copy()
-                    random.shuffle(board["draw"])
-                    board["discard"] = [discardTop]
+                    if(len(board["draw"]) - 1 < 0):
+                        discardTop = board["discard"].pop()
+                        board["draw"] = board["discard"].copy()
+                        random.shuffle(board["draw"])
+                        board["discard"] = [discardTop]
                     
                     self.draw_card(board[nextPlayer], board["draw"])
                     
@@ -159,7 +166,7 @@ class UNO(Game):
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
-    def play_game(self, *players):
+    def play_game(self, players, display):
         """Play an n-person, move-alternating game."""
         state = self.initial
         playerIndex = state.to_move
@@ -168,7 +175,9 @@ class UNO(Game):
             move = players[playerIndex](self, state)
             state = self.result(state, move)
             if self.terminal_test(state):
-                self.display(state)
+                if display:
+                    self.display(state)
+                    
                 return self.get_winner(state)
             
             playerIndex = state.to_move
@@ -179,13 +188,3 @@ class UNO(Game):
                 return player
         
         return None
-
-def sim_game(numberPlayers):
-    playerNames = ["p{0}".format(x) for x in range(numberPlayers)]
-    unoGame = UNO(playerNames)
-    players = tuple(random_player for x in range(numberPlayers)) 
-    
-    return unoGame.play_game(*players)
-    
-    
-sim_game(4)
