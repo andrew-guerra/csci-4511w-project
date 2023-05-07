@@ -20,13 +20,15 @@ def is_winner(state, potentialWinner):
 
 def uno_eval(state):        
     if terminal_test(state):
-        if is_winner(state, state.to_move):
+        if is_winner(state, 0):
             return 1;
         else:
             return -1;
+        
+    return 0
     
-    numCards = len(state.board[state.to_move])
-    return -((numCards - 1) / (numCards + 1))
+    #numCards = len(state.board[state.to_move])
+    #return -((numCards - 1) / (numCards + 1))
 
         
 
